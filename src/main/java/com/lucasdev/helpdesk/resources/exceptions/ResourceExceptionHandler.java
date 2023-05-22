@@ -1,6 +1,7 @@
 package com.lucasdev.helpdesk.resources.exceptions;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +49,19 @@ public class ResourceExceptionHandler {
 		}
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<StandartError> constraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+	 
+		StandartError error = new StandartError(
+	            System.currentTimeMillis(),
+	            HttpStatus.BAD_REQUEST.value(),
+	            "Validation Error",
+	            "Número do registro de contribuinte individual brasileiro (CPF) inválido!",
+	            request.getRequestURI()
+	    );
+	 
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 	}
 }
